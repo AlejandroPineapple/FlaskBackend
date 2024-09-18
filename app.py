@@ -4,8 +4,8 @@ from models import mongo, init_db
 from config import Config
 from bson import ObjectId
 from flask_bcrypt import Bcrypt
-from routes.auth_routes import auth_bp
-from routes.user_routes import user_bp
+from Routes.auth_routes import auth_bp
+from Routes.user_routes import user_bp
 
 app = Flask(__name__)
 app.config.from_object(Config)
