@@ -1,7 +1,9 @@
-from flask import Blueprint, request, jsonify
-from flask_bcrypt import Bcrypt
-from flask_jwt_extended import create_access_token
+from flask import Flask, Blueprint, request, jsonify
+from flask_jwt_extended import JWTManager, create_access_token, jwt_required
 from models import mongo, init_db
+from config import Config
+from bson import ObjectId
+from flask_bcrypt import Bcrypt
 
 bcrypt = Bcrypt()
 auth_bp = Blueprint('auth_bp', __name__)
