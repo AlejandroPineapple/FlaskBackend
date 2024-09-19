@@ -4,6 +4,8 @@ from models import mongo, init_db
 from config import Config
 from bson import ObjectId
 from flask_bcrypt import Bcrypt
+from datetime import timedelta
+
 
 bcrypt = Bcrypt()
 auth_bp = Blueprint('auth_bp', __name__)
@@ -26,8 +28,6 @@ def register():
 
     result = mongo.db.usuarios.insert_one({"username": username, "email": email, "password": hashed_password})
 
-    print("puto")
-
     if result.acknowledged:
         return jsonify({"message": "Todo chido, el usuario se creo"}), 201
     else:
@@ -45,7 +45,7 @@ def login():
         return jsonify({"message": "Medio esquizo de tu parte, el usuario no existe"}), 404
 
     if bcrypt.check_password_hash(usuario['password'], password):
-        access_token = create_access_token(identity=str(usuario["_id"]))
+        access_token = create_access_token(identity=str(usuario["_id"]),expires_delta=timedelta(days=5000))
         return jsonify(access_token=access_token), 200
     else:
         return jsonify({"message": "Tas mal papi, el email o la contraseña son incorrectos"}), 401

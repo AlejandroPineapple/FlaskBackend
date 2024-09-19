@@ -6,6 +6,7 @@ from bson import ObjectId
 from flask_bcrypt import Bcrypt
 from Routes.auth_routes import auth_bp
 from Routes.user_routes import user_bp
+from Routes.pregunta_routes import preguntas_bp
 
 app = Flask(__name__)
 app.config.from_object(Config)
@@ -17,6 +18,7 @@ init_db(app)
 # Registrar blueprints
 app.register_blueprint(auth_bp, url_prefix='/auth')
 app.register_blueprint(user_bp, url_prefix='/user')
+app.register_blueprint(preguntas_bp, url_prefix='/preguntas')
 
 if __name__ == '__main__':
     app.run(debug=True)

@@ -6,8 +6,8 @@ from bson import ObjectId
 from flask_bcrypt import Bcrypt
 
 user_bp = Blueprint('user_bp', __name__)
-bcrypt = Bcrypt(__name__)
-jwt = JWTManager(__name__)
+bcrypt = Bcrypt()
+jwt = JWTManager()
 
 @user_bp.route('/usuarios', methods=['GET'])
 def get_users():
