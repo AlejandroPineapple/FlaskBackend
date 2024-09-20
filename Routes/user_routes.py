@@ -9,20 +9,24 @@ user_bp = Blueprint('user_bp', __name__)
 bcrypt = Bcrypt()
 jwt = JWTManager()
 
-@user_bp.route('/usuarios', methods=['GET'])
+@user_bp.route('/', methods=['GET'])
 def get_users():
     
-    usuarios = mongo.db.usuarios.find({}, {"_id": 0, "username": 1, "email": 1})
+    usuarios = mongo.db.usuarios.find({}, {})
 
     # Convertir el cursor de MongoDB a una lista
-    lista_usuarios = list(usuarios)
+    lista_usuarios = []
+    for usuario in usuarios:
+        usuario['_id'] = str(usuario['_id'])
+        usuario['preguntas_vistas'] = str(usuario['preguntas_vistas'])
+        lista_usuarios.append(usuario)
 
     if lista_usuarios:
         return jsonify(lista_usuarios), 200
     else:
         return jsonify({"message": "No hay nadie estupido"}), 404
 
-@user_bp.route('/usuarios', methods=['DELETE'])
+@user_bp.route('/', methods=['DELETE'])
 def delete_user():
 
     data = request.get_json()

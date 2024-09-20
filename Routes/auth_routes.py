@@ -17,16 +17,17 @@ def register():
     username = data.get('username')
     password = data.get('password')
     email = data.get('email')
+    preguntas_vistas = []
 
     if (mongo.db.usuarios.find_one({"username": username})):
-        return jsonify({"message": "Ese usuario ya existe bro, que poco original"}), 400
+        return jsonify({"message": "Ese usurname ya existe bro, que poco original"}), 400
         
     if (mongo.db.usuarios.find_one({"email": email})):
-        return jsonify({"message": "Ese usuario ya existe bro, que poco original"}), 400
+        return jsonify({"message": "Ese email ya existe bro, que poco original"}), 400
     
     hashed_password = bcrypt.generate_password_hash(password).decode('utf-8')
 
-    result = mongo.db.usuarios.insert_one({"username": username, "email": email, "password": hashed_password})
+    result = mongo.db.usuarios.insert_one({"username": username, "email": email, "password": hashed_password, "preguntas_vistas": preguntas_vistas})
 
     if result.acknowledged:
         return jsonify({"message": "Todo chido, el usuario se creo"}), 201

@@ -17,7 +17,7 @@ init_db(app)
 
 # Registrar blueprints
 app.register_blueprint(auth_bp, url_prefix='/auth')
-app.register_blueprint(user_bp, url_prefix='/user')
+app.register_blueprint(user_bp, url_prefix='/users')
 app.register_blueprint(preguntas_bp, url_prefix='/preguntas')
 
 if __name__ == '__main__':
