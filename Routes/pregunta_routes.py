@@ -1,5 +1,6 @@
 from random import randint
 from flask import Flask, Blueprint, request, jsonify
+from flask_jwt_extended import JWTManager, create_access_token, jwt_required, get_jwt_identity
 from models import mongo, init_db
 from bson.objectid import ObjectId
 
@@ -40,28 +41,15 @@ def mostrar_lista_preguntas():
     else:
         return jsonify({"message": "No hay nada estupido"}), 404
     
-@preguntas_bp.route('/<user_id>', methods = ['GET'])
-def mostrar_pregunta(user_id):
+@preguntas_bp.route('/logeado', methods = ['GET'])
+@jwt_required()
+def mostrar_pregunta():
 
-    if(len(user_id) < 24):
-        user = None
-    else:
-        user = mongo.db.usuarios.find_one({"_id": ObjectId(user_id)})
+    current_user = get_jwt_identity()
+    user = mongo.db.usuarios.find_one({"_id": ObjectId(current_user)})
 
     if not user:
-        random_num = randint(1, mongo.db.preguntas.count_documents({})) 
-        pregunta = mongo.db.preguntas.find_one({"num":random_num},{})
-
-        while (pregunta["oculta"] == True):
-            random_num = randint(1, mongo.db.preguntas.count_documents({})) 
-            pregunta = mongo.db.preguntas.find_one({"num":random_num},{})
-
-        pregunta["_id"] = str(pregunta["_id"])
-
-        if (pregunta):
-            return jsonify(pregunta), 201
-        else:
-            return jsonify({"message": "Algo hiciste mal brother"}), 400
+        return jsonify({"message": "Algo hiciste mal brother"}), 400
     
     preguntas_vistas = user.get("preguntas_vistas", [])
     
@@ -96,7 +84,7 @@ def mostrar_pregunta(user_id):
     pregunta["_id"] = str(pregunta["_id"])
 
     mongo.db.usuarios.update_one(
-        {"_id": ObjectId(user_id)},  
+        {"_id": ObjectId(current_user)},  
         {"$push": {"preguntas_vistas": ObjectId(pregunta["_id"])}}  
     )
 
@@ -105,15 +93,38 @@ def mostrar_pregunta(user_id):
     else:
         return jsonify({"message": "Algo hiciste mal brother"}), 400
 
+@preguntas_bp.route('/', methods = ['GET'])
+def mostrar_pregunta_random():
+    random_num = randint(1, mongo.db.preguntas.count_documents({})) 
+    pregunta = mongo.db.preguntas.find_one({"num":random_num},{})
+
+    while (pregunta["oculta"] == True):
+        random_num = randint(1, mongo.db.preguntas.count_documents({})) 
+        pregunta = mongo.db.preguntas.find_one({"num":random_num},{})
+
+    pregunta["_id"] = str(pregunta["_id"])
+
+    if (pregunta):
+        return jsonify(pregunta), 201
+    else:
+        return jsonify({"message": "Algo hiciste mal brother"}), 400
+
 @preguntas_bp.route('/<pregunta_id>', methods = ['DELETE'])
+@jwt_required()
 def ocultar_pregunta(pregunta_id):
 
-    mongo.db.preguntas.update_one(
-        {"_id": ObjectId(pregunta_id)},  
-        {"$set": {"oculta": True}}  
-    )
+    current_user = get_jwt_identity()
+    user = mongo.db.usuarios.find_one({"_id": ObjectId(current_user)})
+    username = user.get("username")
 
-    return jsonify({"message": "Pregunta ocultada por degenerado"})
+    if (username == "pinaman"):
+        mongo.db.preguntas.update_one(
+            {"_id": ObjectId(pregunta_id)},  
+            {"$set": {"oculta": True}} 
+        )       
+        return jsonify({"message": "Pregunta ocultada por degenerado"})
+    else:
+        return jsonify({"message": "No eres suficientemente chido para borrar una pregunta"})
 
 @preguntas_bp.route('/<pregunta_id>', methods=['POST'])
 def elegir_opcion(pregunta_id):
