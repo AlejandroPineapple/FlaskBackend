@@ -10,6 +10,7 @@ pymongo = {extras = ["srv"], version = "*"}
 flask-jwt-extended = "*"
 flask-bcrypt = "*"
 flask-pymongo = "*"
+sympy = "*"
 
 [dev-packages]
 
