@@ -49,7 +49,6 @@ def get_user_data():
         return jsonify({"message": "Medio esquizo de tu parte, el usuario no existe"}), 404
 
     if bcrypt.check_password_hash(usuario['password'], password):
-        access_token = create_access_token(identity=str(usuario["_id"]))
         return jsonify({
             "username": usuario.get("username"),
             "email": usuario.get("email")
