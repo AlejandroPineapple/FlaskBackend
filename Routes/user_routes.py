@@ -1,5 +1,5 @@
 from flask import Flask, Blueprint, request, jsonify
-from flask_jwt_extended import JWTManager, create_access_token, jwt_required
+from flask_jwt_extended import JWTManager, create_access_token, get_jwt_identity, jwt_required
 from models import mongo, init_db
 from config import Config
 from bson import ObjectId
@@ -38,13 +38,12 @@ def delete_user():
     else:
         return jsonify({"message": "Usuario no encontrado"}), 404
 
-@user_bp.route('/datos', methods=['POST'])
+@user_bp.route('/datos', methods=['GET'])
 @jwt_required()
 def get_user_data():
-    data = request.get_json()
-    password = data.get('password')
-    email = data.get('email').lower().strip()  
-    usuario = mongo.db.usuarios.find_one({"email": email})
+    current_user = get_jwt_identity()
+    usuario = mongo.db.usuarios.find_one({"_id": ObjectId(current_user)})
+    password = usuario.get("password")
 
     if usuario is None:
         return jsonify({"message": "Medio esquizo de tu parte, el usuario no existe"}), 404
