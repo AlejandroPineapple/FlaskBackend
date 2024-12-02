@@ -43,16 +43,12 @@ def delete_user():
 def get_user_data():
     current_user = get_jwt_identity()
     usuario = mongo.db.usuarios.find_one({"_id": ObjectId(current_user)})
-    password = usuario.get("password")
-
+    
     if usuario is None:
         return jsonify({"message": "Medio esquizo de tu parte, el usuario no existe"}), 404
-
-    if bcrypt.check_password_hash(usuario['password'], password):
+    else:
         return jsonify({
             "username": usuario.get("username"),
             "email": usuario.get("email")
         }), 200
-    else:
-        return jsonify({"message": "Tas mal papi, el email o la contraseña son incorrectos"}), 401
     
