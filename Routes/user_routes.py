@@ -50,7 +50,10 @@ def get_user_data():
 
     if bcrypt.check_password_hash(usuario['password'], password):
         access_token = create_access_token(identity=str(usuario["_id"]))
-        return jsonify(access_token=access_token), 200
+        return jsonify({
+            "username": usuario.get("username"),
+            "email": usuario.get("email")
+        }), 200
     else:
         return jsonify({"message": "Tas mal papi, el email o la contraseña son incorrectos"}), 401
     
