@@ -31,10 +31,12 @@ def crear_pregunta():
     
 @preguntas_bp.route('/lista', methods = ['GET'])
 def mostrar_lista_preguntas():
+    preguntas = mongo.db.preguntas.find({}, {})  # Incluye solo el _id para cambiarlo
 
-    preguntas = mongo.db.preguntas.find({}, {"_id": 0})
-
-    lista_preguntas = list(preguntas)
+    lista_preguntas = []
+    for pregunta in preguntas:
+        pregunta['_id'] = str(pregunta['_id'])
+        lista_preguntas.append(pregunta)
 
     if lista_preguntas:
         return jsonify(lista_preguntas), 200

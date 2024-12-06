@@ -16,7 +16,7 @@ def register():
     data = request.get_json()
     username = data.get('username')
     password = data.get('password')
-    email = data.get('email')
+    email = data.get('email').lower().strip()
     preguntas_vistas = []
 
     if (mongo.db.usuarios.find_one({"username": username})):
