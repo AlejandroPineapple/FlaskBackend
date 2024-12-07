@@ -150,14 +150,14 @@ def elegir_opcion(pregunta_id):
             {"_id": ObjectId(pregunta_id)},
             {"$set": {"opcion1_elegida": opcion1_elegida + 1}}
         )
-        return jsonify({"message": "Votaste por la opcion 1 yupii"}), 200
+        return jsonify({"message": "Votaste por la opcion: "+ opcion  + " yupii"}), 200
 
     elif opcion == "opcion2":
         mongo.db.preguntas.update_one(
             {"_id": ObjectId(pregunta_id)},
             {"$set": {"opcion2_elegida": opcion2_elegida + 1}}
         )
-        return jsonify({"message": "Votaste por la opcion 2 yupii"}), 200
+        return jsonify({"message": "Votaste por la opcion: "+ opcion + " yupii"}), 200
 
     else:
         return jsonify({"message": "Seria maravilloso que eligieras una opcion real"}), 400
