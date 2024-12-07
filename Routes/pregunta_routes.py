@@ -141,18 +141,21 @@ def elegir_opcion(pregunta_id):
 
     if not pregunta:
         return jsonify({"message": "Pregunta no encontrada"}), 404
+    
+    opcion1 = pregunta.get("opcion1")
+    opcion2 = pregunta.get("opcion2")
 
     opcion1_elegida = pregunta.get("opcion1_elegida", 0)
     opcion2_elegida = pregunta.get("opcion2_elegida", 0)
 
-    if opcion == "opcion1":
+    if opcion == opcion1:
         mongo.db.preguntas.update_one(
             {"_id": ObjectId(pregunta_id)},
             {"$set": {"opcion1_elegida": opcion1_elegida + 1}}
         )
         return jsonify({"message": "Votaste por la opcion: "+ opcion  + " yupii"}), 200
 
-    elif opcion == "opcion2":
+    elif opcion == opcion2:
         mongo.db.preguntas.update_one(
             {"_id": ObjectId(pregunta_id)},
             {"$set": {"opcion2_elegida": opcion2_elegida + 1}}
