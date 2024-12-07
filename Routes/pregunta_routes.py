@@ -31,7 +31,7 @@ def crear_pregunta():
     
 @preguntas_bp.route('/lista', methods = ['GET'])
 def mostrar_lista_preguntas():
-    preguntas = mongo.db.preguntas.find({}, {})  # Incluye solo el _id para cambiarlo
+    preguntas = mongo.db.preguntas.find({"oculta": False}, {})
 
     lista_preguntas = []
     for pregunta in preguntas:
